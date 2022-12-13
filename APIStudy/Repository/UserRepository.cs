@@ -1,4 +1,5 @@
-﻿using APIStudy.Models;
+﻿using APIStudy.DTO;
+using APIStudy.Models;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
@@ -126,18 +127,19 @@ namespace APIStudy.Repository
 
         }
 
-        public List<Pet> UserPets(int id)
+        public List<OwnerPetDTO> UserPets(int id)
         {
             using (SqlConnection connection = new SqlConnection(this.ConnectionString))
             {
-                var petList = new List<Pet>();
+                var petList = new List<OwnerPetDTO>();
                 var query = @"SELECT 
+            [dbo].[pets].idpet,
 	        [dbo].[pets].name,
 	        [dbo].[pets].animal,
 	        [dbo].[pets].race,
 	        [dbo].[users].name as ownerName,
 	        [dbo].[users].role as ownerRole,
-	        [dbo].[users].telephone as ownerTel
+	        [dbo].[users].telephone
         FROM [dbo].[pets]
         INNER JOIN [dbo].[users] ON [dbo].[pets].idowner = [dbo].[users].id
         WHERE [dbo].[pets].idowner = @id";
@@ -147,11 +149,17 @@ namespace APIStudy.Repository
                 SqlDataReader dr = command.ExecuteReader();
                 while (dr.Read())
                 {
-                    Pet pets = new Pet();
-                    pets.Name = (string)dr["name"];
-                    pets.Race= (string)dr["race"];
-                    pets.Animal = (string)dr["animal"];
-                    petList.Add(pets);
+                    petList.Add(new OwnerPetDTO
+                    {
+                        IdPet = (int)dr["idpet"],
+                        Name = (string)dr["name"],
+                        Animal = (string)dr["animal"],
+                        Race = (string)dr["race"],
+                        OwnerName = (string)dr["ownerName"],
+                        OwnerRole = (string)dr["ownerRole"],
+                        Telephone = (string)dr["telephone"],
+
+                    }) ;
                 }
                 connection.Close();
                 return petList;
