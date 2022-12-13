@@ -361,4 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/APIStudy/.gitignore
 /APIStudy/appsettings.json
+/APIStudy/appsettings.Development.json
