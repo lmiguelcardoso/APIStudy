@@ -1,29 +1,30 @@
-﻿using APIStudy.DTO;
-using APIStudy.Models;
+﻿using Data.Interfaces;
+using Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
-namespace APIStudy.Repository
+namespace Data.Repository
 {
-    public class UserRepository
+    public class PetRepository : IPetRepository
     {
         public string ConnectionString { get; set; }
-        public UserRepository()
+        public PetRepository()
         {
             this.ConnectionString = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json").Build().GetConnectionString("userDB");
         }
 
-        public User InsertUser(User newuser)
+        public Pet InsertPet([FromBody] Pet newPet)
         {
             using (SqlConnection connection = new SqlConnection(this.ConnectionString))
             {
                 try
                 {
-                    var query = "insert into users(name,role,telephone) values(@name, @role, @telephone)";
+                    var query = "insert into pets(name,animal,race,idowner) values(@name, @animal, @race, @idowner)";
                     SqlCommand command = new SqlCommand(query, connection);
-                    AddParameters(command, newuser);
+                    AddParameters(command, newPet);
                     connection.Open();
                     command.ExecuteNonQuery();
                     connection.Close();
@@ -33,39 +34,40 @@ namespace APIStudy.Repository
                     Console.WriteLine(ex);
                 }
             }
-            return newuser;
+            return newPet;
         }
 
-        public List<User> GetUsers()
+        public List<Pet> GetPets()
         {
             using (SqlConnection connection = new SqlConnection(this.ConnectionString))
             {
-                List<User> list = new List<User>();
-                var query = "select * from users";
+                List<Pet> list = new List<Pet>();
+                var query = "select * from pets";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader dr = command.ExecuteReader();
                 while (dr.Read())
                 {
-                    User newuser = new User();
-                    newuser.Id = (int)dr["id"];
-                    newuser.Name = (string)dr["name"];
-                    newuser.Role = (string)dr["role"];
-                    newuser.Telephone = (string)dr["telephone"];
-                    list.Add(newuser);
+                    Pet newpet = new Pet();
+                    newpet.IdPet = (int)dr["idpet"];
+                    newpet.IdOwner = (int)dr["idowner"];
+                    newpet.Race = (string)dr["race"];
+                    newpet.Name = (string)dr["name"];
+                    newpet.Animal = (string)dr["animal"];
+                    list.Add(newpet);
                 }
                 connection.Close();
                 return list;
             }
         }
 
-        public void DeleteUser(int id)
+        public void DeletePet(int id)
         {
             using (SqlConnection connection = new SqlConnection(this.ConnectionString))
             {
                 try
                 {
-                    var query = "delete from users where id = @id ";
+                    var query = "delete from pets where id = @id ";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     connection.Open();
@@ -79,13 +81,13 @@ namespace APIStudy.Repository
             }
         }
 
-        public User FindUserById(int id)
+        public User FindPetById(int id)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(this.ConnectionString))
                 {
-                    var query = "select * from users where id = @id";
+                    var query = "select * from pets where id = @id";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     connection.Open();
@@ -108,17 +110,17 @@ namespace APIStudy.Repository
             }
         }
 
-        public void UpdateUser(User newUser)
+        public void UpdatePet(Pet petToupdate)
         {
 
-            var query = @"UPDATE users
-            SET name = @name, role = @role, telephone = @telephone
-            WHERE id = @id";
+            var query = @"UPDATE pets
+            SET name = @name, race = @race, animal = @animal, idowner = @idowner
+            WHERE id = @idpet";
 
             using (SqlConnection connection = new SqlConnection(this.ConnectionString))
             {
                 SqlCommand command = new SqlCommand(query, connection);
-                AddParameters(command, newUser);
+                AddParameters(command, petToupdate);
 
                 connection.Open();
                 command.ExecuteNonQuery();
@@ -127,53 +129,13 @@ namespace APIStudy.Repository
 
         }
 
-        public List<OwnerPetDTO> UserPets(int id)
-        {
-            using (SqlConnection connection = new SqlConnection(this.ConnectionString))
-            {
-                var petList = new List<OwnerPetDTO>();
-                var query = @"SELECT 
-            [dbo].[pets].idpet,
-	        [dbo].[pets].name,
-	        [dbo].[pets].animal,
-	        [dbo].[pets].race,
-	        [dbo].[users].name as ownerName,
-	        [dbo].[users].role as ownerRole,
-	        [dbo].[users].telephone
-        FROM [dbo].[pets]
-        INNER JOIN [dbo].[users] ON [dbo].[pets].idowner = [dbo].[users].id
-        WHERE [dbo].[pets].idowner = @id";
-                SqlCommand command = new SqlCommand(query,connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                connection.Open();
-                SqlDataReader dr = command.ExecuteReader();
-                while (dr.Read())
-                {
-                    petList.Add(new OwnerPetDTO
-                    {
-                        IdPet = (int)dr["idpet"],
-                        Name = (string)dr["name"],
-                        Animal = (string)dr["animal"],
-                        Race = (string)dr["race"],
-                        OwnerName = (string)dr["ownerName"],
-                        OwnerRole = (string)dr["ownerRole"],
-                        Telephone = (string)dr["telephone"],
-
-                    }) ;
-                }
-                connection.Close();
-                return petList;
-            }
-
-        }
-
-        public bool UserExists(int id)
+        public bool PetExists(int id)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(this.ConnectionString))
                 {
-                    var query = "select * from users where id = @id";
+                    var query = "select * from pets where id = @id";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     connection.Open();
@@ -193,14 +155,13 @@ namespace APIStudy.Repository
                 return false;
             }
         }
-
-        public void AddParameters(SqlCommand command, User user)
+        public void AddParameters(SqlCommand command, Pet pet)
         {
-            command.Parameters.Add("@name", SqlDbType.VarChar).Value = user.Name;
-            command.Parameters.Add("@role", SqlDbType.VarChar).Value = user.Role;
-            command.Parameters.Add("@telephone", SqlDbType.VarChar).Value = user.Telephone;
-            command.Parameters.Add("@id", SqlDbType.Int).Value = user.Id;
+            command.Parameters.Add("@name", SqlDbType.VarChar).Value = pet.Name;
+            command.Parameters.Add("@animal", SqlDbType.VarChar).Value = pet.Animal;
+            command.Parameters.Add("@race", SqlDbType.VarChar).Value = pet.Race;
+            command.Parameters.Add("@idpet", SqlDbType.Int).Value = pet.IdPet;
+            command.Parameters.Add("@idowner", SqlDbType.Int).Value = pet.IdOwner;
         }
     }
 }
-

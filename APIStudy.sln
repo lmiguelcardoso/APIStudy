@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIStudy", "APIStudy\APIStudy.csproj", "{C0ADA6EF-B48B-4E74-8B07-4E513597D94D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIStudy", "APIStudy\APIStudy.csproj", "{C0ADA6EF-B48B-4E74-8B07-4E513597D94D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{61FAD5F9-C784-40DA-80C7-5960FC6851DF} = {61FAD5F9-C784-40DA-80C7-5960FC6851DF}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projeto.Data", "Projeto.Data\Projeto.Data.csproj", "{61FAD5F9-C784-40DA-80C7-5960FC6851DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{C0ADA6EF-B48B-4E74-8B07-4E513597D94D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0ADA6EF-B48B-4E74-8B07-4E513597D94D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0ADA6EF-B48B-4E74-8B07-4E513597D94D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61FAD5F9-C784-40DA-80C7-5960FC6851DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FAD5F9-C784-40DA-80C7-5960FC6851DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61FAD5F9-C784-40DA-80C7-5960FC6851DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61FAD5F9-C784-40DA-80C7-5960FC6851DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

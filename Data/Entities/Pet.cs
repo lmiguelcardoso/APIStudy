@@ -1,4 +1,4 @@
-﻿namespace APIStudy.Models
+﻿namespace Data.Models
 {
     public class Pet
     {

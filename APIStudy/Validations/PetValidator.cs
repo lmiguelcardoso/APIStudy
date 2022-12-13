@@ -1,4 +1,4 @@
-﻿using APIStudy.Models;
+﻿using Data.Models;
 using FluentValidation;
 
 namespace APIStudy.Validations

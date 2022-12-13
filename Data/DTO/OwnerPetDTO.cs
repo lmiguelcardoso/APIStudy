@@ -1,4 +1,4 @@
-﻿namespace APIStudy.DTO
+﻿namespace Data.DTO
 {
     public class OwnerPetDTO
     {

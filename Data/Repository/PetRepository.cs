@@ -1,11 +1,13 @@
-﻿using APIStudy.Models;
+﻿using Data.Interfaces;
+using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
-namespace APIStudy.Repository
+namespace Data.Repository
 {
-    public class PetRepository
+    public class PetRepository : IPetRepository
     {
         public string ConnectionString { get; set; }
         public PetRepository()

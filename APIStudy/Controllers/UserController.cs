@@ -1,6 +1,6 @@
-﻿using APIStudy.Models;
-using APIStudy.Repository;
-using APIStudy.Validations;
+﻿using APIStudy.Validations;
+using Data.Models;
+using Data.Repository;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
